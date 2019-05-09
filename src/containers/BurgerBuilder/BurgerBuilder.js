@@ -17,7 +17,7 @@ class BurgerBuilder extends Component{
                 meat : 0,
                 salad: 0,
                 cheese: 0,
-                bacon: 1
+                bacon: 0
             },
             totalBill: 4
         }
@@ -34,12 +34,41 @@ class BurgerBuilder extends Component{
                 ingredients:newIngredients,
                 totalBill:newBill
             })
-    }  
+    } 
+    
+    removeIngredient = ( type )=> {
+        let newIngredients = {
+            ...this.state.ingredients
+        }
+        let newBill  = this.state.totalBill;
+        
+        newIngredients[type] = newIngredients[type] - 1;
+        if(newIngredients[type] < 0 ) newIngredients[type] = 0;
+        newBill = newBill - INGREDIENT_PRICE[type];
+        this.setState({
+            ingredients:newIngredients,
+            totalBill:newBill
+        });
+    }
     render(){
+        let disableLessButton = {
+            ...this.state.ingredients
+        }
+        let showOrderButton = true;
+        for(let key in disableLessButton){
+                disableLessButton[key] = disableLessButton[key] <= 0;
+                if(!disableLessButton[key])  {showOrderButton = false};
+        }
         return(
             <Auxiliary>
                 <Burger burgerIngre = {this.state.ingredients}></Burger>
-                <BurgerControls addIngredient = {this.addIngredient}/>
+                <BurgerControls 
+                    addIngredient = {this.addIngredient}
+                    removeIngredient = {this.removeIngredient}
+                    disableLessBtn = {disableLessButton}
+                    price = {this.state.totalBill}
+                    showOrderButton = {showOrderButton}
+                    />
             </Auxiliary>
         );
     }
